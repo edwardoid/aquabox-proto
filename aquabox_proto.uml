@@ -1,0 +1,29 @@
+@startuml
+
+actor Relay as dev
+actor Aquabox as cli
+actor User as usr
+
+
+dev --> cli: Connect Send Handhake command
+cli --> dev: Responds with **TEMPORARY** token
+...
+cli -> usr: **IF Device is not found** Notfies about new device 
+usr -> cli: Allows connection. If connection is not allowed add to block list
+cli -> dev: Generates token
+...
+cli -> dev: **If Device found** responds with token
+...
+cli -> dev: **If device is blocked** responds with error and closes connection
+...
+cli --> dev: Requests list of properties
+dev --> cli: Responds with [ "isOn":type ]
+cli --> dev: Get value for "isOn"
+dev --> cli: Returns Value as "isOn", True|False, Type = Boolean
+cli --> usr: Update value
+usr --> cli: Set on|off
+cli --> dev: Set value True|False for "isOn", type Boolean
+dev --> cli: Returns value as for Get request
+cli --> usr: Post update
+
+@enduml
