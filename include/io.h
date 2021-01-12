@@ -8,6 +8,7 @@ namespace aquabox { namespace proto
     class IO
     {
     public:
+        VIRTUAL_FN bool good() const PURE_T(bool);
         VIRTUAL_FN buffer_length_t available() const PURE_T(buffer_length_t);
         VIRTUAL_FN buffer_length_t read(buffer_length_t sz, byte_t* buffer) PURE_T(buffer_length_t);
         template<typename T>
