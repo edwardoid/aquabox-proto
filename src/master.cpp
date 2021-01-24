@@ -1,5 +1,7 @@
 #include "master.h"
 
+#ifndef SLAVE_ONLY
+
 #include <string.h>
 #include <memory.h>
 
@@ -112,7 +114,7 @@ bool Master::getPropertyName(uint8_t index, const char *name)
         return false;
     }
     
-    if (rsp.type != MessageType::Command || rsp.payload.command.command != Command::GetPropertyName)
+if (rsp.type != MessageType::Command || rsp.payload.command.command != Command::GetPropertyName)
     {
         return false;
     }
@@ -350,3 +352,5 @@ bool Master::setProperty<float>(const char *property, const float &value)
     vd.value.F.V = value * vd.value.F.Precision;
     return setProperty<SetValueData>(property, vd);
 }
+
+#endif // SLAVE_ONLY

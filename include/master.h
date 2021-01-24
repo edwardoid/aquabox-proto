@@ -1,6 +1,7 @@
 #ifndef AB_PROTO_MASTER_H
 #define AB_PROTO_MASTER_H
 
+#ifndef SLAVE_ONLY
 #include "message_io.h"
 #include "message.h"
 #include "message_builder.h"
@@ -55,5 +56,7 @@ namespace aquabox
         };
     } // namespace proto
 } // namespace aquabox
+
+#endif // SLAVE_ONLY
 
 #endif // AB_PROTO_MASTER_H

@@ -17,7 +17,7 @@ namespace aquabox
 
         struct CommandPayload
         {
-            Command command;
+            Command command; // 1
             CommandData data;
         };
     } // namespace proto

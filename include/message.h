@@ -19,10 +19,10 @@ namespace aquabox
 
         struct Message // 256 bytes
         {
-            uint8_t serial[SERIAL_LEN];
-            uint8_t token[TOKEN_LEN];
-            uint16_t payloadLength;
-            MessageType type;
+            uint8_t serial[SERIAL_LEN]; // 8
+            uint8_t token[TOKEN_LEN];   // 8
+            uint16_t payloadLength;     // 2
+            MessageType type;           // 1
             union Payload
             {
                 CommandPayload command;

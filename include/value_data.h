@@ -24,14 +24,14 @@ namespace aquabox
 
         struct ValueData
         {
-            char name[16];
-            ValueType type;
+            char name[16];  // 16
+            ValueType type; // 1
             union
             {
-                uint8_t B; // False = 0, True != 0
-                int32_t I;
-                uint32_t U;
-                char S[64];
+                uint8_t B; // 1
+                int32_t I; // 4
+                uint32_t U; // 4
+                char S[64]; // 64
                 FloatValue F;
             } value;
         };
