@@ -19,7 +19,7 @@ namespace aquabox
         {
             ErrorType e;
             char msg[100];
-        };
+        } __attribute__((packed));
     } // namespace proto
 } // namespace aquabox
 

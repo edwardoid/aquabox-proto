@@ -29,7 +29,7 @@ namespace aquabox
                 ErrorPayload error;
                 HandshakePayload handshake;
             } payload;
-        };
+        } __attribute__((packed));
     } // namespace proto
 } // namespace aquabox
 

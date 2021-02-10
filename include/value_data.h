@@ -20,11 +20,11 @@ namespace aquabox
         {
             int32_t V;
             uint16_t Precision;
-        };
+        } __attribute__((packed));
 
         struct ValueData
         {
-            char name[16];  // 16
+            char name[12];  // 12
             ValueType type; // 1
             union
             {
@@ -34,7 +34,7 @@ namespace aquabox
                 char S[64]; // 64
                 FloatValue F;
             } value;
-        };
+        } __attribute__((packed));
 
     } // namespace proto
 } // namespace aquabox

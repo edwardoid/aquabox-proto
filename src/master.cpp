@@ -5,6 +5,10 @@
 #include <string.h>
 #include <memory.h>
 
+
+#include <sstream>
+#define LOG std::cout << std::endl << __FILE__ << ":" << __LINE__ << " "
+
 using namespace aquabox::proto;
 
 bool Master::hasIncomingMessage() const
@@ -171,8 +175,7 @@ bool Master::performHandshake(Message *rcv, Message *rsp)
     return true;
 }
 
-template <>
-bool Master::getProperty<GetValueData>(const char *property, GetValueData &value)
+bool Master::getPropertyData(const char *property, GetValueData &value)
 {
     Message msg;
     MessageBuilder::setSerial(msg, m_serial);
@@ -210,6 +213,48 @@ bool Master::getProperty<GetValueData>(const char *property, GetValueData &value
         return true;
     }
     return false;
+}
+
+bool Master::setPropertyData(const char *property, const SetValueData &value)
+{
+    Message msg;
+    MessageBuilder::setSerial(msg, m_serial);
+    MessageBuilder::setToken(msg, m_token);
+    msg.type = MessageType::Command;
+    msg.payload.command.command = Command::Set;
+
+
+    strcpy(msg.payload.command.data.set.name,
+           property);
+    memcpy(&msg.payload.command.data.set, &value, sizeof(SetValueData));
+
+    Message rpl;
+    if(!m_io->makeRequest(msg, rpl)) {
+        return false;
+    }
+
+    if (rpl.type == MessageType::Command && rpl.payload.command.command == Command::Set)
+    {
+        if (rpl.payload.command.data.set.type != value.type)
+        {
+            return false;
+        }
+
+        if (strncmp(property, rpl.payload.command.data.set.name, strlen(property) != 0))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+template <>
+bool Master::getProperty<GetValueData>(const char *property, GetValueData &value)
+{
+    return getPropertyData(property, value);
 }
 
 template <>
@@ -268,38 +313,7 @@ bool Master::getProperty<float>(const char *property, float &value)
 template <>
 bool Master::setProperty<SetValueData>(const char *property, const SetValueData &value)
 {
-    Message msg;
-    MessageBuilder::setSerial(msg, m_serial);
-    MessageBuilder::setToken(msg, m_token);
-    msg.type = MessageType::Command;
-    msg.payload.command.command = Command::Set;
-
-
-    strcpy(msg.payload.command.data.set.name,
-           property);
-    memcpy(&msg.payload.command.data.set, &value, sizeof(SetValueData));
-
-    Message rpl;
-    if(!m_io->makeRequest(msg, rpl)) {
-        return false;
-    }
-
-    if (rpl.type == MessageType::Command && rpl.payload.command.command == Command::Set)
-    {
-        if (rpl.payload.command.data.set.type != value.type)
-        {
-            return false;
-        }
-
-        if (strncmp(property, rpl.payload.command.data.set.name, strlen(property) != 0))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    return false;
+    return setPropertyData(property, value);
 }
 
 template <>

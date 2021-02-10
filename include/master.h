@@ -46,6 +46,9 @@ namespace aquabox
 
             bool hasIncomingMessage() const;
         protected:
+            virtual bool setPropertyData(const char *property, const SetValueData &value);
+            virtual bool getPropertyData(const char *property, GetValueData &value);
+
             bool handle(Message *rcv, Message *rsp);
             bool performHandshake(Message *rcv, Message *rsp);
 

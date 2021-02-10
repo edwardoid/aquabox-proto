@@ -19,7 +19,7 @@ namespace aquabox
         {
             Command command; // 1
             CommandData data;
-        };
+        } __attribute__((packed));
     } // namespace proto
 } // namespace aquabox
 

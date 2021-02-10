@@ -3,7 +3,6 @@
 
 #include "io.h"
 #include "message_builder.h"
-#include "helpers.h"
 
 namespace aquabox
 {

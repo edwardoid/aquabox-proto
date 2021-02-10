@@ -19,7 +19,7 @@ namespace aquabox
             uint8_t Release;
             uint8_t Major;
             uint8_t Minor;
-        };
+        } __attribute__((packed));
 
         struct HandshakePayload
         {
@@ -27,7 +27,7 @@ namespace aquabox
             ApiVersion minimumVersion;
             ApiVersion maximumVersion;
             HandshakeResult result;
-        };
+        } __attribute__((packed));
         
     } // namespace proto
 } // namespace aquabox
