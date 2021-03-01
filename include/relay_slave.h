@@ -76,8 +76,8 @@ namespace aquabox
             bool m_on;
         };
 
-        const char* RelaySlave::IS_ON("isOn");
-        const int RelaySlave::IS_ON_LEN(strlen("isOn"));
+        const char* RelaySlave::IS_ON("on");
+        const int RelaySlave::IS_ON_LEN(strlen("on"));
 
         const char* RelaySlave::DEVICE_TYPE("deviceType");
         const int RelaySlave::DEVICE_TYPE_LEN(strlen("deviceType"));
