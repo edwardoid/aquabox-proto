@@ -35,8 +35,12 @@ bool Master::handleHandshake()
 
 bool Master::acceptConnectionFrom(const byte_t *serial) const
 {
-    static const char *TST_RELAY = "tstrelay";
-    return memcmp(serial, TST_RELAY, SERIAL_LEN) == 0;
+    static const char *TST_RELAY =  "tstrelay";
+    static const char *TST_FEEDER = "tstfeedr";
+    static const char *TST_DOSATOR ="tdosator";
+    return memcmp(serial, TST_RELAY, SERIAL_LEN) == 0 ||
+           memcmp(serial, TST_FEEDER, SERIAL_LEN) == 0 ||
+           memcmp(serial, TST_DOSATOR, SERIAL_LEN) == 0;
 }
 
 bool Master::authentificationPassed(const byte_t *token) const
@@ -172,6 +176,7 @@ bool Master::performHandshake(Message *rcv, Message *rsp)
         rsp->payload.handshake.result = HandshakeResult::Fail;
     }
 
+    
     return true;
 }
 

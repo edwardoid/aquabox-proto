@@ -50,6 +50,11 @@ namespace aquabox
                 return m_vars[property]->get(value);
             }
         protected:
+            void setProps(SlavePropertyPtr* props)
+            {
+                m_vars = props;
+            }
+        protected:
             SlavePropertyPtr* m_vars;
         };
     }

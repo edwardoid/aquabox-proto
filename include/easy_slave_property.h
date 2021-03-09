@@ -30,6 +30,9 @@ namespace aquabox
         const ValueType BasicType<int32_t>::type = ValueType::Integer;
 
         template<>
+        const ValueType BasicType<uint32_t>::type = ValueType::UnsignedInteger;
+
+        template<>
         const ValueType BasicType<char*>::type = ValueType::String;
 
         template<>
@@ -51,7 +54,7 @@ namespace aquabox
             virtual bool set(const ValueData& in)
             {
                 if (in.type != type()) return false;
-
+                return true;
             }
             virtual bool get(ValueData& out) const
             {
@@ -75,7 +78,6 @@ namespace aquabox
             out.value.B = value ? 1 : 0;
         }
 
-
         template<>
         bool CachedSlaveProperty<int32_t>::set(const ValueData& in)
         {
@@ -88,6 +90,20 @@ namespace aquabox
         bool CachedSlaveProperty<int32_t>::get(ValueData& out) const
         {
             out.value.I = value;
+        }
+
+        template<>
+        bool CachedSlaveProperty<uint32_t>::set(const ValueData& in)
+        {
+            if (in.type != type()) return false;
+
+            value = in.value.U;
+        }
+
+        template<>
+        bool CachedSlaveProperty<uint32_t>::get(ValueData& out) const
+        {
+            out.value.U = value;
         }
 
         template<>

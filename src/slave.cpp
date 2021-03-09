@@ -1,6 +1,8 @@
 #include "slave.h"
 #include "io.h"
 
+#include <iostream>
+
 using namespace aquabox::proto;
 
 Slave::Slave(IO *io, const byte_t *serial, const byte_t *token)
@@ -38,14 +40,21 @@ void Slave::loop()
     bool getResult = false;
     do
     {
-        Message rcv;
-        getResult = m_io->get(rcv);
-        Message rpl;
-        if (dispatch(&rcv, &rpl))
-        {
-            m_io->send(rpl);
-        }
+        getResult = processNextMessage();
     } while (getResult);
+}
+
+bool Slave::processNextMessage()
+{
+    bool getResult = false;
+    Message rcv;
+    getResult = m_io->get(rcv);
+    Message rpl;
+    if (dispatch(&rcv, &rpl))
+    {
+        m_io->send(rpl);
+    }
+    return getResult;
 }
 
 bool Slave::dispatch(Message *message, Message *response)
@@ -102,7 +111,7 @@ bool Slave::handleCommandRequest(Message *msg, Message *response)
         response->payload.command.command = Command::Get;
 
         const int8_t idx = propertyIndex(msg->payload.command.data.get.name);
-        bool ok = idx < propertiesCount();
+        bool ok = idx < propertiesCount() && idx >= 0;
         if (ok)
         {
             memcpy(response->payload.command.data.value.name,
@@ -122,7 +131,7 @@ bool Slave::handleCommandRequest(Message *msg, Message *response)
     case Command::Set:
     {
         const int8_t idx = propertyIndex(msg->payload.command.data.get.name);
-        bool ok = idx < propertiesCount();
+        bool ok = idx < propertiesCount() && idx >= 0;
         if (ok)
         {
             memcpy(response->payload.command.data.value.name,

@@ -15,7 +15,7 @@ namespace aquabox
 
             bool handshake();
 
-            void loop();
+            VIRTUAL_FN void loop();
 
             VIRTUAL_FN uint8_t propertiesCount() const PURE_T(uint8_t);
             VIRTUAL_FN const char* propertyName(uint8_t index) const PURE_T(const char*);
@@ -23,8 +23,9 @@ namespace aquabox
             VIRTUAL_FN ValueType propertyType(uint8_t index) const PURE_T(ValueType);
             VIRTUAL_FN bool set(uint8_t property, const ValueData& value) PURE_T(bool);
             VIRTUAL_FN bool get(uint8_t property, ValueData& value) PURE_T(bool);
+            VIRTUAL_FN bool processNextMessage();
 
-        private:
+        protected:
             bool dispatch(Message* message, Message* response);
             bool handleCommandRequest(Message* msg, Message* response);
 
