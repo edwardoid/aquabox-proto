@@ -1,7 +1,7 @@
 #ifndef AB_PROTO_IO_H
 #define AB_PROTO_IO_H
 
-#include <types.h>
+#include "types.h"
 
 namespace aquabox { namespace proto
 {
