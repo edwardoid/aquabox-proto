@@ -2,8 +2,7 @@
 
 using namespace aquabox::proto;
 
-MessageIO::MessageIO()
-{}
+MessageIO::MessageIO() { }
 
 bool MessageIO::makeRequest(const Message& req, Message& rsp)
 {

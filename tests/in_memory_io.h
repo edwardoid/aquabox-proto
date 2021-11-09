@@ -3,16 +3,17 @@
 
 #include <vector>
 
-namespace aquabox { namespace proto
-{
+namespace aquabox {
+namespace proto {
 
-    class InMemory: public IO
-    {
+    class InMemory : public IO {
     public:
         InMemory(std::vector<byte_t>& in, std::vector<byte_t>& out)
-            : m_in(in), m_out(out)
-        {}
-    
+            : m_in(in)
+            , m_out(out)
+        {
+        }
+
         VIRTUAL_FN buffer_length_t available() const
         {
             return m_in.size();
@@ -32,18 +33,16 @@ namespace aquabox { namespace proto
             m_out.resize(m_out.size() + sz);
             memcpy(m_out.data() + m_out.size() - sz, buffer, sz);
             return sz;
-        } 
+        }
 
-    template<typename T>
-    T min(const T a, const T b) { return b > a ? a : b; }
-
-
+        template <typename T>
+        T min(const T a, const T b) { return b > a ? a : b; }
 
     private:
         std::vector<byte_t>& m_in;
         std::vector<byte_t>& m_out;
     };
-} }
-
+}
+}
 
 #endif // AB_PROTO_IN_MEMORY_H

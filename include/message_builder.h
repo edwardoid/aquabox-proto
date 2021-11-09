@@ -4,10 +4,9 @@
 #include "message.h"
 #include <string.h>
 
-namespace aquabox {  namespace proto
-{
-    struct MessageBuilder
-    {
+namespace aquabox {
+namespace proto {
+    struct MessageBuilder {
         static inline void setSerial(Message& msg, const uint8_t* serial)
         {
             memcpy(&msg.serial, serial, SERIAL_LEN);
@@ -33,7 +32,7 @@ namespace aquabox {  namespace proto
 
             setSerial(msg, serial);
             setToken(msg, token);
-         
+
             msg.payload.handshake.maximumVersion.Release = api_release;
             msg.payload.handshake.maximumVersion.Major = api_major;
             msg.payload.handshake.maximumVersion.Minor = api_minor;
@@ -41,7 +40,6 @@ namespace aquabox {  namespace proto
             msg.payload.handshake.minimumVersion.Release = api_release;
             msg.payload.handshake.minimumVersion.Major = api_major;
             msg.payload.handshake.minimumVersion.Minor = api_minor;
-
 
             msg.payload.handshake.desiredVersion.Release = api_release;
             msg.payload.handshake.desiredVersion.Major = api_major;
@@ -52,6 +50,7 @@ namespace aquabox {  namespace proto
             return msg;
         }
     };
-} }
+}
+}
 
 #endif // AB_PROTO_MESSAGE_BUILDER_H

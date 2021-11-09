@@ -4,17 +4,14 @@
 #include <io.h>
 #include <message.h>
 
-namespace aquabox
-{
-    namespace proto
-    {
-        class MessageIO: public IO
-        {
-        public:
-            MessageIO();
-            virtual bool makeRequest(const Message& req, Message& rsp);
-        };
-    }
+namespace aquabox {
+namespace proto {
+    class MessageIO : public IO {
+    public:
+        MessageIO();
+        virtual bool makeRequest(const Message& req, Message& rsp);
+    };
+}
 }
 
 #endif // AB_PROTO_MESSAGE_IO_H
