@@ -13,7 +13,6 @@ namespace proto {
         bool handshake();
 
         VIRTUAL_FN void loop();
-
         VIRTUAL_FN uint8_t propertiesCount() const PURE_T(uint8_t);
         VIRTUAL_FN const char* propertyName(uint8_t index) const PURE_T(const char*);
         VIRTUAL_FN int8_t propertyIndex(const char*) const PURE_T(uint8_t);

@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include <sstream>
+#include <iostream>
 #define LOG std::cout << std::endl \
                       << __FILE__ << ":" << __LINE__ << " "
 
@@ -25,7 +26,6 @@ bool Master::handleHandshake()
         if (handle(&rcv, &rpl)) {
             return m_io->send(rpl);
         }
-        return true;
     }
 
     return false;
@@ -57,10 +57,20 @@ bool Master::isBlocked(const byte_t* token) const
     return memcmp(token, DENIED, TOKEN_LEN) == 0;
 }
 
+bool Master::isEmptySerial(const byte_t* serial) const
+{
+    for (int i = 0; i < SERIAL_LEN; ++i) {
+        if (serial[i] != 0)
+            return false;
+    }
+
+    return true;
+}
+
 bool Master::isEmptyToken(const byte_t* token) const
 {
     for (int i = 0; i < TOKEN_LEN; ++i) {
-        if (token[i] != '0')
+        if (token[i] != 0)
             return false;
     }
 
@@ -122,6 +132,9 @@ bool Master::getPropertyName(uint8_t index, const char* name)
 
 bool Master::handle(Message* rcv, Message* rsp)
 {
+    if (isEmptySerial(rcv->serial)) {
+        return false;
+    }
     switch (rcv->type) {
     case MessageType::Handshake: {
         return performHandshake(rcv, rsp);
@@ -142,6 +155,8 @@ bool Master::performHandshake(Message* rcv, Message* rsp)
 
     rsp->payload.handshake.result = HandshakeResult::Ok;
 
+    mempcpy(m_serial, rcv->serial, SERIAL_LEN);
+
     if (isEmptyToken(rcv->token)) {
         updateToken(rcv->token, rsp->token);
     } else if (isBlocked(rcv->token)) {
@@ -149,7 +164,6 @@ bool Master::performHandshake(Message* rcv, Message* rsp)
             "Authentification failed");
     } else if (acceptConnectionFrom(rcv->serial)) {
         updateToken(rcv->token, rsp->token);
-        mempcpy(m_serial, rcv->serial, SERIAL_LEN);
         mempcpy(m_token, rcv->token, TOKEN_LEN);
     } else {
         rsp->payload.handshake.result = HandshakeResult::Fail;
@@ -170,20 +184,24 @@ bool Master::getPropertyData(const char* property, GetValueData& value)
 
     Message rpl;
     if (!m_io->makeRequest(msg, rpl)) {
+        LOG << "Request to get property " << property << " failed!'n";
         return false;
     }
 
     if (rpl.type == MessageType::Command && rpl.payload.command.command == Command::Get) {
         if (rpl.payload.command.data.get.type != value.type) {
+            LOG << "Reply command GET type mismatch. Expected" << value.type << " got " << rpl.payload.command.data.get.type << "!!!!";
             return false;
         }
 
         if (strncmp(property, rpl.payload.command.data.get.name,
                 strlen(property) != 0)) {
+            LOG << "Property name length mismatch!\n";
             return false;
         }
 
         if (rpl.payload.command.data.set.type != value.type) {
+            LOG << "Reply command SET type mismatch. Expected" << value.type << " got " << rpl.payload.command.data.get.type << "!!!!";
             return false;
         }
 

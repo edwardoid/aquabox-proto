@@ -27,6 +27,8 @@ namespace proto {
 
         VIRTUAL_FN bool isBlocked(const byte_t* token) const;
 
+        inline bool isEmptySerial(const byte_t* serial) const;
+
         inline bool isEmptyToken(const byte_t* token) const;
 
         VIRTUAL_FN void updateToken(const byte_t* inital, byte_t* updated);
