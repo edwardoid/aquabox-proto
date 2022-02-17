@@ -5,10 +5,9 @@
 #include <memory.h>
 #include <string.h>
 
-#include <sstream>
 #include <iostream>
-#define LOG std::cout << std::endl \
-                      << __FILE__ << ":" << __LINE__ << " "
+#include <sstream>
+#define LOG std::cout << std::endl << __FILE__ << ":" << __LINE__ << " "
 
 using namespace aquabox::proto;
 
@@ -36,7 +35,8 @@ bool Master::acceptConnectionFrom(const byte_t* serial) const
     static const char* TST_RELAY = "tstrelay";
     static const char* TST_FEEDER = "tstfeedr";
     static const char* TST_DOSATOR = "tdosator";
-    return memcmp(serial, TST_RELAY, SERIAL_LEN) == 0 || memcmp(serial, TST_FEEDER, SERIAL_LEN) == 0 || memcmp(serial, TST_DOSATOR, SERIAL_LEN) == 0;
+    return memcmp(serial, TST_RELAY, SERIAL_LEN) == 0 || memcmp(serial, TST_FEEDER, SERIAL_LEN) == 0
+           || memcmp(serial, TST_DOSATOR, SERIAL_LEN) == 0;
 }
 
 bool Master::authentificationPassed(const byte_t* token) const
@@ -83,7 +83,8 @@ void Master::updateToken(const byte_t* inital, byte_t* updated)
         const char* ALLOWED = "allow me";
         memcpy(updated, ALLOWED, TOKEN_LEN);
         updated[0] = 'T';
-    } else {
+    }
+    else {
         memcpy(updated, inital, TOKEN_LEN);
     }
 }
@@ -106,7 +107,7 @@ int Master::getPropertiesCount()
         return -1;
     }
 
-    return (int)rsp.payload.command.data.count;
+    return (int) rsp.payload.command.data.count;
 }
 
 bool Master::getPropertyName(uint8_t index, const char* name)
@@ -140,8 +141,7 @@ bool Master::handle(Message* rcv, Message* rsp)
         return performHandshake(rcv, rsp);
     }
     default: {
-        MessageBuilder::setError(*rsp, ErrorType::Unsupported,
-            "Command is not supported by server");
+        MessageBuilder::setError(*rsp, ErrorType::Unsupported, "Command is not supported by server");
         return true;
     }
     }
@@ -159,13 +159,15 @@ bool Master::performHandshake(Message* rcv, Message* rsp)
 
     if (isEmptyToken(rcv->token)) {
         updateToken(rcv->token, rsp->token);
-    } else if (isBlocked(rcv->token)) {
-        MessageBuilder::setError(*rsp, ErrorType::AccessDenied,
-            "Authentification failed");
-    } else if (acceptConnectionFrom(rcv->serial)) {
+    }
+    else if (isBlocked(rcv->token)) {
+        MessageBuilder::setError(*rsp, ErrorType::AccessDenied, "Authentification failed");
+    }
+    else if (acceptConnectionFrom(rcv->serial)) {
         updateToken(rcv->token, rsp->token);
         mempcpy(m_token, rcv->token, TOKEN_LEN);
-    } else {
+    }
+    else {
         rsp->payload.handshake.result = HandshakeResult::Fail;
     }
 
@@ -190,18 +192,18 @@ bool Master::getPropertyData(const char* property, GetValueData& value)
 
     if (rpl.type == MessageType::Command && rpl.payload.command.command == Command::Get) {
         if (rpl.payload.command.data.get.type != value.type) {
-            LOG << "Reply command GET type mismatch. Expected" << value.type << " got " << rpl.payload.command.data.get.type << "!!!!";
+            LOG << "Reply command GET type mismatch. Expected " << value.type << " got " << rpl.payload.command.data.get.type << "!!!!";
+            LOG << "Requested prop '" << msg.payload.command.data.get.name << "' got '" << rpl.payload.command.data.get.name << "'!!!!";
             return false;
         }
 
-        if (strncmp(property, rpl.payload.command.data.get.name,
-                strlen(property) != 0)) {
+        if (strncmp(property, rpl.payload.command.data.get.name, strlen(property) != 0)) {
             LOG << "Property name length mismatch!\n";
             return false;
         }
 
         if (rpl.payload.command.data.set.type != value.type) {
-            LOG << "Reply command SET type mismatch. Expected" << value.type << " got " << rpl.payload.command.data.get.type << "!!!!";
+            LOG << "Reply command SET type mismatch. Expected " << value.type << " got " << rpl.payload.command.data.get.type << "!!!!";
             return false;
         }
 
@@ -233,8 +235,7 @@ bool Master::setPropertyData(const char* property, const SetValueData& value)
             return false;
         }
 
-        if (strncmp(property, rpl.payload.command.data.set.name,
-                strlen(property) != 0)) {
+        if (strncmp(property, rpl.payload.command.data.set.name, strlen(property) != 0)) {
             return false;
         }
 
@@ -244,14 +245,13 @@ bool Master::setPropertyData(const char* property, const SetValueData& value)
     return false;
 }
 
-template <>
-bool Master::getProperty<GetValueData>(const char* property,
-    GetValueData& value)
+template<>
+bool Master::getProperty<GetValueData>(const char* property, GetValueData& value)
 {
     return getPropertyData(property, value);
 }
 
-template <>
+template<>
 bool Master::getProperty<bool>(const char* property, bool& value)
 {
     GetValueData vd;
@@ -261,7 +261,7 @@ bool Master::getProperty<bool>(const char* property, bool& value)
     return ok;
 }
 
-template <>
+template<>
 bool Master::getProperty<int32_t>(const char* property, int32_t& value)
 {
     GetValueData vd;
@@ -271,7 +271,7 @@ bool Master::getProperty<int32_t>(const char* property, int32_t& value)
     return ok;
 }
 
-template <>
+template<>
 bool Master::getProperty<uint32_t>(const char* property, uint32_t& value)
 {
     GetValueData vd;
@@ -281,9 +281,8 @@ bool Master::getProperty<uint32_t>(const char* property, uint32_t& value)
     return ok;
 }
 
-template <>
-bool Master::getProperty<const char*>(const char* property,
-    const char*& value)
+template<>
+bool Master::getProperty<const char*>(const char* property, const char*& value)
 {
     GetValueData vd;
     vd.type = ValueType::String;
@@ -294,24 +293,23 @@ bool Master::getProperty<const char*>(const char* property,
     return ok;
 }
 
-template <>
+template<>
 bool Master::getProperty<float>(const char* property, float& value)
 {
     GetValueData vd;
     vd.type = ValueType::Float;
     bool ok = getProperty(property, vd);
-    value = (double)(vd.value.F.V) / (double)(vd.value.F.Precision);
+    value = (double) (vd.value.F.V) / (double) (vd.value.F.Precision);
     return ok;
 }
 
-template <>
-bool Master::setProperty<SetValueData>(const char* property,
-    const SetValueData& value)
+template<>
+bool Master::setProperty<SetValueData>(const char* property, const SetValueData& value)
 {
     return setPropertyData(property, value);
 }
 
-template <>
+template<>
 bool Master::setProperty<bool>(const char* property, const bool& value)
 {
     SetValueData vd;
@@ -321,7 +319,7 @@ bool Master::setProperty<bool>(const char* property, const bool& value)
     return setProperty<SetValueData>(property, vd);
 }
 
-template <>
+template<>
 bool Master::setProperty<int32_t>(const char* property, const int32_t& value)
 {
     SetValueData vd;
@@ -331,9 +329,8 @@ bool Master::setProperty<int32_t>(const char* property, const int32_t& value)
     return setProperty<SetValueData>(property, vd);
 }
 
-template <>
-bool Master::setProperty<uint32_t>(const char* property,
-    const uint32_t& value)
+template<>
+bool Master::setProperty<uint32_t>(const char* property, const uint32_t& value)
 {
     SetValueData vd;
     strcpy(vd.name, property);
@@ -342,9 +339,8 @@ bool Master::setProperty<uint32_t>(const char* property,
     return setProperty<SetValueData>(property, vd);
 }
 
-template <>
-bool Master::setProperty<const char*>(const char* property,
-    const char* const& value)
+template<>
+bool Master::setProperty<const char*>(const char* property, const char* const& value)
 {
     SetValueData vd;
     strcpy(vd.name, property);
@@ -353,7 +349,7 @@ bool Master::setProperty<const char*>(const char* property,
     return setProperty<SetValueData>(property, vd);
 }
 
-template <>
+template<>
 bool Master::setProperty<float>(const char* property, const float& value)
 {
     SetValueData vd;

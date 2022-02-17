@@ -22,25 +22,28 @@
 #include <mutex>
 #include <vector>
 
-namespace aquabox {
-namespace proto {
-    class UNIXSocketIO : public MessageIO {
-    public:
-        UNIXSocketIO(int sc, int timeout = 10);
-        virtual proto::buffer_length_t wait(proto::buffer_length_t length) const override;
-        virtual proto::buffer_length_t available() const override;
-        virtual proto::buffer_length_t write(const proto::byte_t* buffer, proto::buffer_length_t sz) override;
-        virtual proto::buffer_length_t read(proto::buffer_length_t sz, proto::byte_t* buffer) override;
-        virtual bool good() const override;
-        virtual void close() override;
+namespace aquabox
+{
+    namespace proto
+    {
+        class UNIXSocketIO : public MessageIO
+        {
+        public:
+            UNIXSocketIO(int sc, int timeout = 10);
+            virtual proto::buffer_length_t wait(proto::buffer_length_t length) const override;
+            virtual proto::buffer_length_t available() const override;
+            virtual proto::buffer_length_t write(const proto::byte_t* buffer, proto::buffer_length_t sz) override;
+            virtual proto::buffer_length_t read(proto::buffer_length_t sz, proto::byte_t* buffer) override;
+            virtual bool good() const override;
+            virtual void close() override;
 
-        virtual bool makeRequest(const proto::Message& req, proto::Message& rsp) override;
+            virtual bool makeRequest(const proto::Message& req, proto::Message& rsp) override;
 
-    private:
-        int m_sfd;
-        std::mutex m_ioMx;
-        mutable std::vector<proto::byte_t> m_buffer;
-        mutable bool m_good;
-    };
-}
+        private:
+            int m_sfd;
+            std::mutex m_ioMx;
+            mutable std::vector<proto::byte_t> m_buffer;
+            mutable bool m_good;
+        };
+    } // namespace proto
 } // namespace aquabox

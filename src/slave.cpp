@@ -7,7 +7,7 @@ using namespace aquabox::proto;
 
 Slave::Slave(IO* io, const byte_t* serial, const byte_t* token)
     : m_io(io)
-    , m_serial { 0, 0, 0, 0, 0, 0, 0 }
+    , m_serial{0, 0, 0, 0, 0, 0, 0}
 {
     memcpy(const_cast<byte_t*>(m_serial), serial, SERIAL_LEN);
     memcpy(m_token, token, TOKEN_LEN);
@@ -87,9 +87,9 @@ bool Slave::handleCommandRequest(Message* msg, Message* response)
             size_t len = strlen(pname);
             memcpy(response->payload.command.data.string, pname, len);
             response->payload.command.data.string[len] = '\0';
-        } else {
-            MessageBuilder::setError(*response, ErrorType::Unsupported,
-                "Bad property index");
+        }
+        else {
+            MessageBuilder::setError(*response, ErrorType::Unsupported, "Bad property index");
         }
         break;
     }
@@ -102,16 +102,14 @@ bool Slave::handleCommandRequest(Message* msg, Message* response)
         bool ok = idx < propertiesCount() && idx >= 0;
         if (ok) {
             memcpy(response->payload.command.data.value.name,
-                msg->payload.command.data.get.name,
-                strlen(msg->payload.command.data.get.name));
-            response->payload.command.data.value
-                .name[strlen(msg->payload.command.data.get.name)]
-                = '\0';
+                   msg->payload.command.data.get.name,
+                   strlen(msg->payload.command.data.get.name));
+            response->payload.command.data.value.name[strlen(msg->payload.command.data.get.name)] = '\0';
             response->payload.command.data.value.type = propertyType(idx);
             ok = get(idx, response->payload.command.data.get);
-        } else if (!ok) {
-            MessageBuilder::setError(*response, ErrorType::Unsupported,
-                "Property does not exists");
+        }
+        else if (!ok) {
+            MessageBuilder::setError(*response, ErrorType::Unsupported, "Property does not exists");
         }
         break;
     }
@@ -121,16 +119,14 @@ bool Slave::handleCommandRequest(Message* msg, Message* response)
         bool ok = idx < propertiesCount() && idx >= 0;
         if (ok) {
             memcpy(response->payload.command.data.value.name,
-                msg->payload.command.data.get.name,
-                strlen(msg->payload.command.data.get.name));
-            response->payload.command.data.value
-                .name[strlen(msg->payload.command.data.get.name)]
-                = '\0';
+                   msg->payload.command.data.get.name,
+                   strlen(msg->payload.command.data.get.name));
+            response->payload.command.data.value.name[strlen(msg->payload.command.data.get.name)] = '\0';
             response->payload.command.data.value.type = propertyType(idx);
             ok = set(idx, msg->payload.command.data.set) && get(idx, response->payload.command.data.set);
-        } else if (!ok) {
-            MessageBuilder::setError(*response, ErrorType::Unsupported,
-                "Property does not exists");
+        }
+        else if (!ok) {
+            MessageBuilder::setError(*response, ErrorType::Unsupported, "Property does not exists");
         }
         break;
     }

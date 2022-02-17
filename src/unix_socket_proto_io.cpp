@@ -45,18 +45,20 @@ UNIXSocketIO::UNIXSocketIO(int sc, int timeoutSeconds)
     timeout.tv_sec = timeoutSeconds;
     timeout.tv_usec = 500;
 
-    m_good = setsockopt(m_sfd, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout,
-                 sizeof(timeout))
-            >= 0
-        && setsockopt(m_sfd, SOL_SOCKET, SO_SNDTIMEO, (char*)&timeout,
-               sizeof(timeout))
-            >= 0;
+    m_good = setsockopt(m_sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) >= 0
+             && setsockopt(m_sfd, SOL_SOCKET, SO_SNDTIMEO, (char*) &timeout, sizeof(timeout)) >= 0;
     m_good = true;
 }
 
-void UNIXSocketIO::close() { ::close(m_sfd); }
+void UNIXSocketIO::close()
+{
+    ::close(m_sfd);
+}
 
-bool UNIXSocketIO::good() const { return m_good; }
+bool UNIXSocketIO::good() const
+{
+    return m_good;
+}
 
 buffer_length_t UNIXSocketIO::wait(buffer_length_t length) const
 {
@@ -95,7 +97,7 @@ buffer_length_t UNIXSocketIO::available() const
 
 buffer_length_t UNIXSocketIO::write(const byte_t* buffer, buffer_length_t sz)
 {
-    int count = ::write(m_sfd, buffer, (size_t)sz);
+    int count = ::write(m_sfd, buffer, (size_t) sz);
     return count > 0 ? count : 0;
 }
 
@@ -121,7 +123,8 @@ bool UNIXSocketIO::makeRequest(const proto::Message& req, proto::Message& rsp)
         if (m_good) {
             m_good = send(req);
             if (!m_good) {
-            } else {
+            }
+            else {
                 m_good = get(rsp);
             }
         }
