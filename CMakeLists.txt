@@ -19,11 +19,21 @@ set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION 1)
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 
 if (BUILD_TEST)
-   file(GLOB TEST_SOURCES "tests/*.cpp")
+   file(GLOB TEST_SOURCES "${CMAKE_CURRENT_LIST_DIR}/tests/*.cpp")
    add_executable(${PROJECT_NAME}_test ${PROJECT_NAME} ${TEST_SOURCES})
    include_directories(${PROJECT_NAME}_test "include")
 
    target_link_libraries (${PROJECT_NAME}_test ${PROJECT_NAME})
+endif()
+
+set(BUILD_INSPECTOR ON)
+
+if (BUILD_INSPECTOR)
+   file(GLOB INSPECTOR_SOURCES "${CMAKE_CURRENT_LIST_DIR}/inspector/*.cpp")
+   add_executable(${PROJECT_NAME}_inspector ${INSPECTOR_SOURCES})
+   include_directories(${PROJECT_NAME}_inspector "include")
+
+   target_link_libraries (${PROJECT_NAME}_inspector ${PROJECT_NAME})
 endif()
 
 

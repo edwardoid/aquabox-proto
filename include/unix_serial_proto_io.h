@@ -1,3 +1,6 @@
+
+
+
 /*
  * AquaBox
  * Copyright (C) 2019-2023  Eduard Sargsyan
@@ -19,6 +22,7 @@
 #pragma once
 
 #include <message_io.h>
+#include <termios.h>
 #include <mutex>
 #include <vector>
 
@@ -26,10 +30,10 @@ namespace aquabox
 {
     namespace proto
     {
-        class UNIXSocketIO : public MessageIO
+        class UNIXSerialIO : public MessageIO
         {
         public:
-            UNIXSocketIO(int sc, int timeout = 10);
+            UNIXSerialIO(const char* dev, unsigned int baudrate);
             virtual proto::buffer_length_t wait(proto::buffer_length_t length) const override;
             virtual proto::buffer_length_t available() const override;
             virtual proto::buffer_length_t write(const proto::byte_t* buffer, proto::buffer_length_t sz) override;
@@ -40,7 +44,8 @@ namespace aquabox
             virtual bool makeRequest(const proto::Message& req, proto::Message& rsp) override;
 
         private:
-            int m_sfd;
+            int m_fd;
+            termios m_tty;
             std::mutex m_ioMx;
             mutable std::vector<proto::byte_t> m_buffer;
             mutable bool m_good;
